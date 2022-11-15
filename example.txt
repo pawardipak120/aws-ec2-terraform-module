@@ -1,0 +1,11 @@
+module "ec2_test" {
+  source = "./ec2-module"
+  name = "test-ec2-server"
+  ami_id = ""
+  user_data = templatefile("${path.module}/user_data_svc_master_1.tftpl",{
+    efs_name = "aws_efs_file_system.efs.dns_name"
+   }
+
+  )
+  create_ec2_profile = true
+}
