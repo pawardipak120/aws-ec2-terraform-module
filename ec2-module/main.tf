@@ -15,7 +15,7 @@ resource "aws_instance" "this" {
   subnet_id              = var.subnet_id
   vpc_security_group_ids = var.vpc_security_group_ids
 
-  key_name             = var.create_ec2_key_pair ? aws_key_pair.instance.key_name : var.key_name
+  key_name             = var.create_ec2_key_pair ? aws_key_pair.instance[0].key_name : var.key_name
   monitoring           = var.monitoring
   get_password_data    = var.get_password_data
   iam_instance_profile =  var.create_ec2_profile ? aws_iam_instance_profile.ec2_profile[0].name : var.iam_instance_profile
