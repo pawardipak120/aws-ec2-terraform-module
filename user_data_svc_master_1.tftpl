@@ -1,0 +1,35 @@
+#!/bin/bash -xe
+
+# Installting the SSM agent
+sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+sudo systemctl status amazon-ssm-agent
+sudo systemctl start amazon-ssm-agent
+
+#Mounting an secondary EBS volume
+sudo mkfs -t xfs /dev/xvdf
+sudo mkdir /docker
+sudo ln -s /docker /var/lib/docker
+sudo chmod 666 /var/run/docker.sock
+
+sudo service docker stop
+sudo service docker start
+
+sudo mount /dev/xvdf /docker
+
+BLK_ID=$(sudo blkid /dev/xvdf | cut -f2 -d" ")
+
+if [[ -z $BLK_ID ]]; then
+  echo "Hmm ... no block ID found ... "
+  exit 1
+fi
+
+echo "$BLK_ID     /docker  xfs    defaults,nofail   0   2" | sudo tee --append /etc/fstab
+sudo mount -a
+
+## Mounting EFS file system
+
+mkdir -p /efs
+efs_host="${efs_name}"
+mount  -t nfs4 $efs_host:/ /efs
+# Edit fstab so EFS automatically loads on reboot
+echo $efs_host:/ /efs nfs defaults,_netdev 0 0 >> /etc/fstab
