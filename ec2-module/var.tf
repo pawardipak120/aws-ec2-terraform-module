@@ -226,3 +226,9 @@ variable "create_ssm_access" {
   type = bool
   default = true
 }
+
+## SSH key
+variable "create_ec2_key_pair" {
+  type = bool
+  default = false
+}

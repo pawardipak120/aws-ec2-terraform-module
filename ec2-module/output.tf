@@ -42,3 +42,21 @@ output "private_ip" {
 output "ec2_iam_role_name" {
   value = try(aws_iam_role.main[0].name, "")
 }
+
+# Ec2 ssh key
+
+output "secretsmanager_secret" {
+  value = try(aws_secretsmanager_secret.example.id, "")
+}
+
+output "secretsmanager_secret_version" {
+  value = try(aws_secretsmanager_secret_version.example.id,"")
+}
+
+output "ssh_keyname" {
+  value = try(aws_key_pair.instance.key_name,"")
+}
+
+output "ssh_private_key" {
+  value = try(tls_private_key.instance.private_key_pem,"")
+}
